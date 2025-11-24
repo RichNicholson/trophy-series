@@ -177,6 +177,16 @@ export default function AdminDashboard() {
         }
     };
 
+    // Helper function to normalize time format for PostgreSQL INTERVAL
+    const normalizeTimeFormat = (time: string): string => {
+        // If format is MM:SS, convert to HH:MM:SS
+        const parts = time.split(':');
+        if (parts.length === 2) {
+            return `00:${time}`;
+        }
+        return time;
+    };
+
     // Result Management
     const handleAddResult = async (e: FormEvent) => {
         e.preventDefault();
@@ -188,7 +198,7 @@ export default function AdminDashboard() {
                 .insert([{
                     race_id: selectedRaceId,
                     runner_id: resultForm.runner_id,
-                    finish_time: resultForm.finish_time
+                    finish_time: normalizeTimeFormat(resultForm.finish_time)
                 }])
                 .select();
 
@@ -210,7 +220,7 @@ export default function AdminDashboard() {
                 .from('results')
                 .update({
                     runner_id: resultForm.runner_id,
-                    finish_time: resultForm.finish_time
+                    finish_time: normalizeTimeFormat(resultForm.finish_time)
                 })
                 .eq('id', editingResult.id);
 
