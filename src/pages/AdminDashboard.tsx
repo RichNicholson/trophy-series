@@ -187,6 +187,72 @@ export default function AdminDashboard() {
         return time;
     };
 
+    // Calculate and update positions and points for a race
+    const calculateAndUpdatePositions = async (raceId: string) => {
+        try {
+            // Fetch all results for this race with runner info
+            const { data: raceResults, error: fetchError } = await supabase
+                .from('results')
+                .select('*, runner:runners(*)')
+                .eq('race_id', raceId);
+
+            if (fetchError) throw fetchError;
+            if (!raceResults) return;
+
+            // Group by gender and calculate positions/points
+            const updates: Array<{ id: string; position: number; points: number }> = [];
+
+            // Process men and women separately
+            ['M', 'F'].forEach((gender) => {
+                const genderResults = raceResults
+                    .filter((r: any) => r.runner?.gender === gender)
+                    .sort((a: any, b: any) => {
+                        // Sort by finish_time
+                        const timeA = a.finish_time;
+                        const timeB = b.finish_time;
+                        return timeA < timeB ? -1 : timeA > timeB ? 1 : 0;
+                    });
+
+                let currentPosition = 0;
+                let prevTime: string | null = null;
+                let tiedCount = 0;
+
+                genderResults.forEach((result: any) => {
+                    if (prevTime === null || result.finish_time !== prevTime) {
+                        // New position (not a tie)
+                        currentPosition = currentPosition + tiedCount + 1;
+                        tiedCount = 0;
+                    } else {
+                        // This is a tie
+                        tiedCount = tiedCount + 1;
+                    }
+
+                    // Calculate points: 25 for 1st, 24 for 2nd, etc., minimum 0
+                    const points = Math.max(25 - (currentPosition - 1), 0);
+
+                    updates.push({
+                        id: result.id,
+                        position: currentPosition,
+                        points: points
+                    });
+
+                    prevTime = result.finish_time;
+                });
+            });
+
+            // Batch update all positions and points
+            for (const update of updates) {
+                await supabase
+                    .from('results')
+                    .update({ position: update.position, points: update.points })
+                    .eq('id', update.id);
+            }
+
+        } catch (error) {
+            console.error('Error calculating positions:', error);
+        }
+    };
+
     // Result Management
     const handleAddResult = async (e: FormEvent) => {
         e.preventDefault();
@@ -203,6 +269,10 @@ export default function AdminDashboard() {
                 .select();
 
             if (error) throw error;
+
+            // Recalculate positions and points for this race
+            await calculateAndUpdatePositions(selectedRaceId);
+
             setResultForm({ runner_id: '', finish_time: '' });
             fetchResultsForRace(selectedRaceId);
         } catch (error) {
@@ -226,6 +296,9 @@ export default function AdminDashboard() {
 
             if (error) throw error;
 
+            // Recalculate positions and points for this race
+            await calculateAndUpdatePositions(selectedRaceId);
+
             setEditingResult(null);
             setResultForm({ runner_id: '', finish_time: '' });
             fetchResultsForRace(selectedRaceId);
@@ -241,7 +314,12 @@ export default function AdminDashboard() {
         try {
             const { error } = await supabase.from('results').delete().eq('id', id);
             if (error) throw error;
-            if (selectedRaceId) fetchResultsForRace(selectedRaceId);
+
+            // Recalculate positions and points for this race
+            if (selectedRaceId) {
+                await calculateAndUpdatePositions(selectedRaceId);
+                fetchResultsForRace(selectedRaceId);
+            }
         } catch (error) {
             console.error('Error deleting result:', error);
             alert('Error deleting result');
