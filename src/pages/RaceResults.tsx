@@ -98,7 +98,7 @@ export default function RaceResults() {
                                             background: selectedRace?.id === race.id ? 'rgba(99, 102, 241, 0.15)' : 'rgba(30, 37, 71, 0.6)'
                                         }}
                                     >
-                                        <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-text-primary)' }}>{race.name}</div>
+                                        <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: '#ffffff' }}>{race.name}</div>
                                         <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
                                             {format(new Date(race.race_date), 'MMM d, yyyy')}
                                         </div>

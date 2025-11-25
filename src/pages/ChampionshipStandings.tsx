@@ -146,7 +146,7 @@ export default function ChampionshipStandings() {
 
     return (
         <Layout>
-            <div className="container">
+            <div className="container-wide">
                 <div className="page-header">
                     <h1 className="page-title">Championship Standings</h1>
                     <p className="page-subtitle">Overall points across all races in the series</p>
