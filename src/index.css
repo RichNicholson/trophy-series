@@ -430,6 +430,39 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   color: #7c2d12;
 }
 
+/* Mobile Responsive Classes */
+.race-results-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.runner-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.race-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.result-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
@@ -449,6 +482,22 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
   .grid-2 {
     grid-template-columns: 1fr;
+  }
+
+  .race-results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-row {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .runner-form-grid,
+  .race-form-grid,
+  .result-form-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 
   .page-title {

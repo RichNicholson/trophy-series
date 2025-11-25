@@ -359,7 +359,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <form onSubmit={editingRunner ? handleUpdateRunner : handleAddRunner}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: '1rem', marginBottom: '1rem' }}>
+                        <div className="runner-form-grid">
                             <input
                                 type="text"
                                 className="form-input"
@@ -455,7 +455,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <form onSubmit={editingRace ? handleUpdateRace : handleAddRace}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '1rem', marginBottom: '1rem' }}>
+                        <div className="race-form-grid">
                             <input
                                 type="text"
                                 className="form-input"
@@ -577,7 +577,7 @@ export default function AdminDashboard() {
                     {selectedRaceId && (
                         <>
                             <form onSubmit={editingResult ? handleUpdateResult : handleAddResult}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: '1rem', marginBottom: '1rem' }}>
+                                <div className="result-form-grid">
                                     <select
                                         className="form-select"
                                         value={resultForm.runner_id}
@@ -682,7 +682,7 @@ export default function AdminDashboard() {
                         </>
                     )}
                 </div>
-            </div>
-        </Layout>
+            </div >
+        </Layout >
     );
 }

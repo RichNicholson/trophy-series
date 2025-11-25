@@ -80,7 +80,7 @@ export default function RaceResults() {
                         </div>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '2rem' }}>
+                    <div className="race-results-grid">
                         {/* Race List Sidebar */}
                         <div>
                             <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 600 }}>Races</h3>
