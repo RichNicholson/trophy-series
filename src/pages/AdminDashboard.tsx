@@ -38,11 +38,19 @@ export default function AdminDashboard() {
     const fetchData = async () => {
         try {
             const [runnersRes, racesRes] = await Promise.all([
-                supabase.from('runners').select('*').order('name'),
-                supabase.from('races').select('*').order('race_date', { ascending: false })
+                supabase.from('runners').select('*'),
+                supabase.from('races').select('*').order('race_date', { ascending: true })
             ]);
 
-            if (runnersRes.data) setRunners(runnersRes.data);
+            if (runnersRes.data) {
+                // Sort runners by surname (last name)
+                const sorted = runnersRes.data.sort((a, b) => {
+                    const aLastName = a.name.split(' ').pop() || '';
+                    const bLastName = b.name.split(' ').pop() || '';
+                    return aLastName.localeCompare(bLastName);
+                });
+                setRunners(sorted);
+            }
             if (racesRes.data) setRaces(racesRes.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -57,7 +65,7 @@ export default function AdminDashboard() {
                 .from('results')
                 .select('*, runner:runners(*)')
                 .eq('race_id', raceId)
-                .order('position');
+                .order('finish_time');
 
             if (data) setResults(data);
         } catch (error) {

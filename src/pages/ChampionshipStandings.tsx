@@ -72,58 +72,77 @@ export default function ChampionshipStandings() {
         );
     }
 
-    const renderStandingsTable = (standings: ChampionshipStanding[], title: string, color: string) => (
-        <div className="card">
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem', color }}>
-                {title}
-            </h3>
-            <div className="table-container">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Position</th>
-                            <th>Runner</th>
-                            <th>Total Points</th>
-                            <th>Races</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {standings.length === 0 ? (
+    const renderStandingsTable = (standings: ChampionshipStanding[], title: string, color: string) => {
+        // Calculate positions with tie handling
+        const standingsWithPositions = standings.map((standing, index) => {
+            let position = index + 1;
+
+            // Check if tied with previous runner
+            if (index > 0 && standings[index - 1].total_points === standing.total_points) {
+                // Find the position of the first runner in this tie group
+                let tierIndex = index - 1;
+                while (tierIndex > 0 && standings[tierIndex - 1].total_points === standing.total_points) {
+                    tierIndex--;
+                }
+                position = tierIndex + 1;
+            }
+
+            return { ...standing, position };
+        });
+
+        return (
+            <div className="card">
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem', color }}>
+                    {title}
+                </h3>
+                <div className="table-container">
+                    <table className="table">
+                        <thead>
                             <tr>
-                                <td colSpan={4} className="empty-state">No results yet</td>
+                                <th>Position</th>
+                                <th>Runner</th>
+                                <th>Total Points</th>
+                                <th>Races</th>
                             </tr>
-                        ) : (
-                            standings.map((standing, index) => (
-                                <tr key={standing.runner_id}>
-                                    <td>
-                                        {index < 3 ? (
-                                            <span className={`position-badge position-${index + 1}`}>
-                                                {index + 1}
-                                            </span>
-                                        ) : (
-                                            index + 1
-                                        )}
-                                    </td>
-                                    <td style={{ fontWeight: index < 3 ? 600 : 400 }}>
-                                        {standing.runner_name}
-                                    </td>
-                                    <td>
-                                        <strong style={{
-                                            fontSize: index < 3 ? '1.125rem' : '1rem',
-                                            color: index < 3 ? 'var(--color-accent-primary)' : 'inherit'
-                                        }}>
-                                            {standing.total_points}
-                                        </strong>
-                                    </td>
-                                    <td>{standing.races_participated}</td>
+                        </thead>
+                        <tbody>
+                            {standings.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="empty-state">No results yet</td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                standingsWithPositions.map((standing) => (
+                                    <tr key={standing.runner_id}>
+                                        <td>
+                                            {standing.position < 4 ? (
+                                                <span className={`position-badge position-${standing.position}`}>
+                                                    {standing.position}
+                                                </span>
+                                            ) : (
+                                                standing.position
+                                            )}
+                                        </td>
+                                        <td style={{ fontWeight: standing.position < 4 ? 600 : 400 }}>
+                                            {standing.runner_name}
+                                        </td>
+                                        <td>
+                                            <strong style={{
+                                                fontSize: standing.position < 4 ? '1.125rem' : '1rem',
+                                                color: standing.position < 4 ? 'var(--color-accent-primary)' : 'inherit'
+                                            }}>
+                                                {standing.total_points}
+                                            </strong>
+                                        </td>
+                                        <td>{standing.races_participated}</td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <Layout>
