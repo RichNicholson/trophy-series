@@ -215,6 +215,21 @@ body {
   color: var(--color-text-muted);
 }
 
+/* Date input placeholder styling */
+input[type="date"]:invalid {
+  color: var(--color-text-muted);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
 /* Tables */
 .table-container {
   overflow-x: auto;
