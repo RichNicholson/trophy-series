@@ -127,7 +127,6 @@ export default function ChampionshipStandingsAgeGraded() {
                                 <tr>
                                     <th>Pos</th>
                                     <th>Runner</th>
-                                    <th>Gender</th>
                                     <th>Total Points</th>
                                     <th>Races</th>
                                 </tr>
@@ -135,7 +134,7 @@ export default function ChampionshipStandingsAgeGraded() {
                             <tbody>
                                 {standings.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="empty-state">No age-graded results yet</td>
+                                        <td colSpan={4} className="empty-state">No age-graded results yet</td>
                                     </tr>
                                 ) : (
                                     standingsWithPositions.map((standing) => (
@@ -152,7 +151,6 @@ export default function ChampionshipStandingsAgeGraded() {
                                             <td style={{ fontWeight: standing.position < 4 ? 600 : 400 }}>
                                                 {standing.runner_name}
                                             </td>
-                                            <td>{standing.gender}</td>
                                             <td>
                                                 <strong style={{
                                                     fontSize: standing.position < 4 ? '1.125rem' : '1rem',
