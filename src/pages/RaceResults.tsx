@@ -94,14 +94,14 @@ export default function RaceResults() {
                                             padding: '1rem',
                                             textAlign: 'left',
                                             cursor: 'pointer',
-                                            border: selectedRace?.id === race.id ? '2px solid var(--color-accent-primary)' : '1px solid rgba(255, 255, 255, 0.1)',
-                                            background: selectedRace?.id === race.id ? 'rgba(99, 102, 241, 0.15)' : 'rgba(30, 37, 71, 0.6)'
+                                            border: selectedRace?.id === race.id ? '2px solid var(--color-accent-primary)' : '1px solid rgba(0, 133, 255, 0.15)',
+                                            background: selectedRace?.id === race.id ? 'rgba(0, 133, 255, 0.1)' : 'var(--color-bg-secondary)'
                                         }}
                                     >
                                         <div style={{ fontSize: '0.75rem', color: 'var(--color-accent-primary)', marginBottom: '0.25rem', fontWeight: 600 }}>
                                             Race {index + 1}
                                         </div>
-                                        <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: '#ffffff' }}>{race.name}</div>
+                                        <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-text-primary)' }}>{race.name}</div>
                                         <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
                                             {format(new Date(race.race_date), 'MMM d, yyyy')}
                                         </div>
