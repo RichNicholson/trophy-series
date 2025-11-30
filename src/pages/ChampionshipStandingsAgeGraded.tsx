@@ -141,7 +141,7 @@ export default function ChampionshipStandingsAgeGraded() {
                                     </tr>
                                 ) : (
                                     standingsWithPositions.map((standing) => (
-                                        <tr key={standing.runner_id}>
+                                        <tr key={standing.runner_id} style={{ fontWeight: standing.position < 4 ? 700 : 400 }}>
                                             <td>
                                                 {standing.position < 4 ? (
                                                     <span className={`position-badge position-${standing.position}`}>
@@ -151,16 +151,16 @@ export default function ChampionshipStandingsAgeGraded() {
                                                     standing.position
                                                 )}
                                             </td>
-                                            <td style={{ fontWeight: standing.position < 4 ? 600 : 400 }}>
+                                            <td>
                                                 {standing.runner_name}
                                             </td>
                                             <td>
-                                                <strong style={{
+                                                <span style={{
                                                     fontSize: standing.position < 4 ? '1.125rem' : '1rem',
                                                     color: standing.position < 4 ? 'var(--color-brand-purple)' : 'inherit'
                                                 }}>
                                                     {standing.total_points}
-                                                </strong>
+                                                </span>
                                             </td>
                                             <td>{standing.races_participated}</td>
                                         </tr>

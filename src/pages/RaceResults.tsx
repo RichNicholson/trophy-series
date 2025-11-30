@@ -154,7 +154,7 @@ export default function RaceResults() {
                                                                 </tr>
                                                             ) : (
                                                                 getMaleResults().map((result) => (
-                                                                    <tr key={result.id}>
+                                                                    <tr key={result.id} style={{ fontWeight: result.position && result.position <= 3 ? 700 : 400 }}>
                                                                         <td>
                                                                             {result.position && result.position <= 3 ? (
                                                                                 <span className={`position-badge position-${result.position}`}>
@@ -167,9 +167,9 @@ export default function RaceResults() {
                                                                         <td>{result.runner?.name}</td>
                                                                         <td>{result.finish_time}</td>
                                                                         <td>
-                                                                            <strong style={{ color: result.position && result.position <= 3 ? 'var(--color-male)' : 'inherit' }}>
+                                                                            <span style={{ color: result.position && result.position <= 3 ? 'var(--color-male)' : 'inherit' }}>
                                                                                 {result.points}
-                                                                            </strong>
+                                                                            </span>
                                                                         </td>
                                                                     </tr>
                                                                 ))
@@ -186,12 +186,12 @@ export default function RaceResults() {
                                                 </h3>
                                                 <div className="table-container">
                                                     <table className="table">
-                                                        <thead>
+                                                        <thead style={{ background: 'var(--color-brand-green-light)' }}>
                                                             <tr>
-                                                                <th>Pos</th>
-                                                                <th>Name</th>
-                                                                <th>Time</th>
-                                                                <th>Points</th>
+                                                                <th style={{ color: 'var(--color-brand-green)' }}>Pos</th>
+                                                                <th style={{ color: 'var(--color-brand-green)' }}>Name</th>
+                                                                <th style={{ color: 'var(--color-brand-green)' }}>Time</th>
+                                                                <th style={{ color: 'var(--color-brand-green)' }}>Points</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -201,7 +201,7 @@ export default function RaceResults() {
                                                                 </tr>
                                                             ) : (
                                                                 getFemaleResults().map((result) => (
-                                                                    <tr key={result.id}>
+                                                                    <tr key={result.id} style={{ fontWeight: result.position && result.position <= 3 ? 700 : 400 }}>
                                                                         <td>
                                                                             {result.position && result.position <= 3 ? (
                                                                                 <span className={`position-badge position-${result.position}`}>
@@ -214,9 +214,9 @@ export default function RaceResults() {
                                                                         <td>{result.runner?.name}</td>
                                                                         <td>{result.finish_time}</td>
                                                                         <td>
-                                                                            <strong style={{ color: result.position && result.position <= 3 ? 'var(--color-female)' : 'inherit' }}>
+                                                                            <span style={{ color: result.position && result.position <= 3 ? 'var(--color-female)' : 'inherit' }}>
                                                                                 {result.points}
-                                                                            </strong>
+                                                                            </span>
                                                                         </td>
                                                                     </tr>
                                                                 ))
@@ -256,7 +256,7 @@ export default function RaceResults() {
                                                             .filter(r => r.age_graded_percent !== null && r.age_graded_percent !== undefined)
                                                             .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
                                                             .map((result) => (
-                                                                <tr key={result.id}>
+                                                                <tr key={result.id} style={{ fontWeight: result.age_graded_position && result.age_graded_position <= 3 ? 700 : 400 }}>
                                                                     <td>
                                                                         {result.age_graded_position && result.age_graded_position <= 3 ? (
                                                                             <span className={`position-badge position-${result.age_graded_position}`}>
@@ -268,16 +268,14 @@ export default function RaceResults() {
                                                                     </td>
                                                                     <td>{result.runner?.name}</td>
                                                                     <td>
-                                                                        <strong>
-                                                                            {result.age_graded_percent
-                                                                                ? (result.age_graded_percent * 100).toFixed(2) + '%'
-                                                                                : '-'}
-                                                                        </strong>
+                                                                        {result.age_graded_percent
+                                                                            ? (result.age_graded_percent * 100).toFixed(2) + '%'
+                                                                            : '-'}
                                                                     </td>
                                                                     <td>
-                                                                        <strong style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-purple)' : 'inherit' }}>
+                                                                        <span style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-purple)' : 'inherit' }}>
                                                                             {result.age_graded_points}
-                                                                        </strong>
+                                                                        </span>
                                                                     </td>
                                                                 </tr>
                                                             ))

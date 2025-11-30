@@ -100,7 +100,7 @@ export default function ChampionshipStandings() {
         );
     }
 
-    const renderStandingsTable = (standings: ChampionshipStanding[], title: string, color: string) => {
+    const renderStandingsTable = (standings: ChampionshipStanding[], title: string, color: string, headerBgColor: string = 'var(--color-bg-tertiary)') => {
         // Calculate positions with tie handling
         const standingsWithPositions = standings.map((standing, index) => {
             let position = index + 1;
@@ -125,12 +125,12 @@ export default function ChampionshipStandings() {
                 </h3>
                 <div className="table-container">
                     <table className="table">
-                        <thead>
+                        <thead style={{ background: headerBgColor }}>
                             <tr>
-                                <th>Position</th>
-                                <th>Runner</th>
-                                <th>Total Points</th>
-                                <th>Races</th>
+                                <th style={{ color }}>Position</th>
+                                <th style={{ color }}>Runner</th>
+                                <th style={{ color }}>Total Points</th>
+                                <th style={{ color }}>Races</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -140,7 +140,7 @@ export default function ChampionshipStandings() {
                                 </tr>
                             ) : (
                                 standingsWithPositions.map((standing) => (
-                                    <tr key={standing.runner_id}>
+                                    <tr key={standing.runner_id} style={{ fontWeight: standing.position < 4 ? 700 : 400 }}>
                                         <td>
                                             {standing.position < 4 ? (
                                                 <span className={`position-badge position-${standing.position}`}>
@@ -150,16 +150,16 @@ export default function ChampionshipStandings() {
                                                 standing.position
                                             )}
                                         </td>
-                                        <td style={{ fontWeight: standing.position < 4 ? 600 : 400 }}>
+                                        <td>
                                             {standing.runner_name}
                                         </td>
                                         <td>
-                                            <strong style={{
+                                            <span style={{
                                                 fontSize: standing.position < 4 ? '1.125rem' : '1rem',
-                                                color: standing.position < 4 ? 'var(--color-accent-primary)' : 'inherit'
+                                                color: standing.position < 4 ? color : 'inherit'
                                             }}>
                                                 {standing.total_points}
-                                            </strong>
+                                            </span>
                                         </td>
                                         <td>{standing.races_participated}</td>
                                     </tr>
@@ -188,8 +188,8 @@ export default function ChampionshipStandings() {
                     </div>
                 ) : (
                     <div className="grid grid-2">
-                        {renderStandingsTable(maleStandings, '👨 Men\'s Championship', 'var(--color-male)')}
-                        {renderStandingsTable(femaleStandings, '👩 Women\'s Championship', 'var(--color-female)')}
+                        {renderStandingsTable(maleStandings, '👨 Men\'s Championship', 'var(--color-male)', 'var(--color-bg-tertiary)')}
+                        {renderStandingsTable(femaleStandings, '👩 Women\'s Championship', 'var(--color-female)', 'var(--color-brand-green-light)')}
                     </div>
                 )}
             </div>
