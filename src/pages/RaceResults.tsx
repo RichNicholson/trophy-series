@@ -233,8 +233,6 @@ export default function RaceResults() {
                                                         <th>Pos</th>
                                                         <th>Name</th>
                                                         <th>Gender</th>
-                                                        <th>Age</th>
-                                                        <th>Time</th>
                                                         <th>AG %</th>
                                                         <th>Points</th>
                                                     </tr>
@@ -245,7 +243,7 @@ export default function RaceResults() {
                                                         .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
                                                         .length === 0 ? (
                                                         <tr>
-                                                            <td colSpan={7} className="empty-state">No age-graded results available</td>
+                                                            <td colSpan={5} className="empty-state">No age-graded results available</td>
                                                         </tr>
                                                     ) : (
                                                         results
@@ -264,12 +262,6 @@ export default function RaceResults() {
                                                                     </td>
                                                                     <td>{result.runner?.name}</td>
                                                                     <td>{result.runner?.gender}</td>
-                                                                    <td>
-                                                                        {result.runner?.date_of_birth && selectedRace?.race_date
-                                                                            ? calculateAge(result.runner.date_of_birth, selectedRace.race_date)
-                                                                            : '-'}
-                                                                    </td>
-                                                                    <td>{result.finish_time}</td>
                                                                     <td>
                                                                         <strong>
                                                                             {result.age_graded_percent
