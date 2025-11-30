@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import type { Race, Result } from '../types';
 import Layout from '../components/Layout';
 import { format } from 'date-fns';
+import { calculateAge } from '../lib/ageGrading';
 
 export default function RaceResults() {
     const [races, setRaces] = useState<Race[]>([]);
@@ -216,6 +217,71 @@ export default function RaceResults() {
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Age-Graded Results (Combined) */}
+                                    <div className="card" style={{ marginTop: '2rem' }}>
+                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-accent)' }}>
+                                            🏆 Age-Graded Results (Combined)
+                                        </h3>
+                                        <div className="table-container">
+                                            <table className="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Pos</th>
+                                                        <th>Name</th>
+                                                        <th>Gender</th>
+                                                        <th>Age</th>
+                                                        <th>Time</th>
+                                                        <th>AG %</th>
+                                                        <th>Points</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {results
+                                                        .filter(r => r.age_graded_percent !== null && r.age_graded_percent !== undefined)
+                                                        .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
+                                                        .length === 0 ? (
+                                                        <tr>
+                                                            <td colSpan={7} className="empty-state">No age-graded results available</td>
+                                                        </tr>
+                                                    ) : (
+                                                        results
+                                                            .filter(r => r.age_graded_percent !== null && r.age_graded_percent !== undefined)
+                                                            .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
+                                                            .map((result) => (
+                                                                <tr key={result.id}>
+                                                                    <td>
+                                                                        {result.age_graded_position && result.age_graded_position <= 3 ? (
+                                                                            <span className={`position-badge position-${result.age_graded_position}`}>
+                                                                                {result.age_graded_position}
+                                                                            </span>
+                                                                        ) : (
+                                                                            result.age_graded_position
+                                                                        )}
+                                                                    </td>
+                                                                    <td>{result.runner?.name}</td>
+                                                                    <td>{result.runner?.gender}</td>
+                                                                    <td>
+                                                                        {result.runner?.date_of_birth && selectedRace?.race_date
+                                                                            ? calculateAge(result.runner.date_of_birth, selectedRace.race_date)
+                                                                            : '-'}
+                                                                    </td>
+                                                                    <td>{result.finish_time}</td>
+                                                                    <td>
+                                                                        <strong>
+                                                                            {result.age_graded_percent
+                                                                                ? (result.age_graded_percent * 100).toFixed(2) + '%'
+                                                                                : '-'}
+                                                                        </strong>
+                                                                    </td>
+                                                                    <td><strong>{result.age_graded_points}</strong></td>
+                                                                </tr>
+                                                            ))
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </>
                             )}
                         </div>

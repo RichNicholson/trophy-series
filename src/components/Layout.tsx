@@ -23,6 +23,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             Championship
                         </Link>
                     </li>
+                    <li>
+                        <Link to="/standings-age-graded" className={`nav-link ${isActive('/standings-age-graded') ? 'active' : ''}`}>
+                            Age-Graded
+                        </Link>
+                    </li>
                     {isAdmin && (
                         <li>
                             <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'active' : ''}`}>
