@@ -21,7 +21,12 @@ export default function ChampionshipStandingsAgeGraded() {
             if (!results) return;
 
             // Aggregate points by runner
-            const standingsMap = new Map<string, ChampionshipStanding>();
+            const standingsMap = new Map<string, {
+                runner_id: string;
+                runner_name: string;
+                gender: 'M' | 'F';
+                points: number[];
+            }>();
 
             results.forEach((result: any) => {
                 if (!result.runner) return;
@@ -30,25 +35,38 @@ export default function ChampionshipStandingsAgeGraded() {
                 if (result.age_graded_points === null || result.age_graded_points === undefined) return;
 
                 const runnerId = result.runner.id;
+                const points = result.age_graded_points || 0;
                 const existing = standingsMap.get(runnerId);
 
                 if (existing) {
-                    existing.total_points += result.age_graded_points || 0;
-                    existing.races_participated += 1;
+                    existing.points.push(points);
                 } else {
                     standingsMap.set(runnerId, {
                         runner_id: runnerId,
                         runner_name: result.runner.name,
                         gender: result.runner.gender,
-                        total_points: result.age_graded_points || 0,
-                        races_participated: 1
+                        points: [points]
                     });
                 }
             });
 
-            // Convert to array and sort by total points
-            const sortedStandings = Array.from(standingsMap.values())
-                .sort((a, b) => b.total_points - a.total_points);
+            // Calculate totals based on best 6 results
+            const sortedStandings: ChampionshipStanding[] = Array.from(standingsMap.values()).map(entry => {
+                // Sort points descending
+                const sortedPoints = entry.points.sort((a, b) => b - a);
+                // Take top 6
+                const best6 = sortedPoints.slice(0, 6);
+                // Sum
+                const total_points = best6.reduce((sum, p) => sum + p, 0);
+
+                return {
+                    runner_id: entry.runner_id,
+                    runner_name: entry.runner_name,
+                    gender: entry.gender,
+                    total_points,
+                    races_participated: entry.points.length
+                };
+            }).sort((a, b) => b.total_points - a.total_points);
 
             setStandings(sortedStandings);
         } catch (error) {

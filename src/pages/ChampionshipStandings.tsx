@@ -22,30 +22,49 @@ export default function ChampionshipStandings() {
             if (!results) return;
 
             // Aggregate points by runner
-            const standingsMap = new Map<string, ChampionshipStanding>();
+            const standingsMap = new Map<string, {
+                runner_id: string;
+                runner_name: string;
+                gender: 'M' | 'F';
+                points: number[];
+            }>();
 
             results.forEach((result: any) => {
                 if (!result.runner) return;
 
                 const runnerId = result.runner.id;
+                const points = result.points || 0;
                 const existing = standingsMap.get(runnerId);
 
                 if (existing) {
-                    existing.total_points += result.points || 0;
-                    existing.races_participated += 1;
+                    existing.points.push(points);
                 } else {
                     standingsMap.set(runnerId, {
                         runner_id: runnerId,
                         runner_name: result.runner.name,
                         gender: result.runner.gender,
-                        total_points: result.points || 0,
-                        races_participated: 1
+                        points: [points]
                     });
                 }
             });
 
-            // Convert to arrays and sort
-            const allStandings = Array.from(standingsMap.values());
+            // Calculate totals based on best 6 results
+            const allStandings: ChampionshipStanding[] = Array.from(standingsMap.values()).map(entry => {
+                // Sort points descending
+                const sortedPoints = entry.points.sort((a, b) => b - a);
+                // Take top 6
+                const best6 = sortedPoints.slice(0, 6);
+                // Sum
+                const total_points = best6.reduce((sum, p) => sum + p, 0);
+
+                return {
+                    runner_id: entry.runner_id,
+                    runner_name: entry.runner_name,
+                    gender: entry.gender,
+                    total_points,
+                    races_participated: entry.points.length
+                };
+            });
             const males = allStandings
                 .filter(s => s.gender === 'M')
                 .sort((a, b) => b.total_points - a.total_points);
