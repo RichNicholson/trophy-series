@@ -52,10 +52,10 @@ export default function ChampionshipStandings() {
             const allStandings: ChampionshipStanding[] = Array.from(standingsMap.values()).map(entry => {
                 // Sort points descending
                 const sortedPoints = entry.points.sort((a, b) => b - a);
-                // Take top 6
-                const best6 = sortedPoints.slice(0, 6);
+                // Take top 5
+                const best5 = sortedPoints.slice(0, 5);
                 // Sum
-                const total_points = best6.reduce((sum, p) => sum + p, 0);
+                const total_points = best5.reduce((sum, p) => sum + p, 0);
 
                 return {
                     runner_id: entry.runner_id,
