@@ -25,7 +25,7 @@
 
   /* Gender Colors */
   --color-male: #0085FF;
-  --color-female: #ff69b4;
+  --color-female: #16a34a;
 
   /* Position Badge Colors */
   --color-gold: #FFD700;
@@ -300,9 +300,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .badge-female {
-  background: rgba(255, 105, 180, 0.15);
+  background: rgba(22, 163, 74, 0.15);
   color: var(--color-female);
-  border: 1px solid rgba(255, 105, 180, 0.3);
+  border: 1px solid rgba(22, 163, 74, 0.3);
 }
 
 /* Layout */
