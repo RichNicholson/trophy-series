@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import type { Runner, Race, Result } from '../types';
 import Layout from '../components/Layout';
+import { calculateAge, calculateAgeGradedPercent, intervalToSeconds } from '../lib/ageGrading';
 
 export default function AdminDashboard() {
     const { isAdmin } = useAuth();
@@ -19,7 +20,7 @@ export default function AdminDashboard() {
     const [selectedRaceId, setSelectedRaceId] = useState<string>('');
 
     // Form states
-    const [runnerForm, setRunnerForm] = useState({ name: '', gender: 'M' as 'M' | 'F' });
+    const [runnerForm, setRunnerForm] = useState({ name: '', gender: 'M' as 'M' | 'F', date_of_birth: '' });
     const [raceForm, setRaceForm] = useState({ name: '', race_date: '', distance: '' });
     const [resultForm, setResultForm] = useState({ runner_id: '', finish_time: '' });
 
@@ -84,7 +85,7 @@ export default function AdminDashboard() {
 
             if (error) throw error;
             if (data) setRunners([...runners, ...data]);
-            setRunnerForm({ name: '', gender: 'M' });
+            setRunnerForm({ name: '', gender: 'M', date_of_birth: '' });
         } catch (error) {
             console.error('Error adding runner:', error);
             alert('Error adding runner');
@@ -110,7 +111,7 @@ export default function AdminDashboard() {
             ));
 
             setEditingRunner(null);
-            setRunnerForm({ name: '', gender: 'M' });
+            setRunnerForm({ name: '', gender: 'M', date_of_birth: '' });
         } catch (error) {
             console.error('Error updating runner:', error);
             alert('Error updating runner');
@@ -198,6 +199,16 @@ export default function AdminDashboard() {
     // Calculate and update positions and points for a race
     const calculateAndUpdatePositions = async (raceId: string) => {
         try {
+            // Fetch race details (for distance and date)
+            const { data: race, error: raceError } = await supabase
+                .from('races')
+                .select('distance, race_date')
+                .eq('id', raceId)
+                .single();
+
+            if (raceError) throw raceError;
+            if (!race) return;
+
             // Fetch all results for this race with runner info
             const { data: raceResults, error: fetchError } = await supabase
                 .from('results')
@@ -207,15 +218,34 @@ export default function AdminDashboard() {
             if (fetchError) throw fetchError;
             if (!raceResults) return;
 
-            // Group by gender and calculate positions/points
-            const updates: Array<{ id: string; position: number; points: number }> = [];
+            // Calculate age-graded percentages for all results
+            const resultsWithAgeGraded = raceResults.map((result: any) => {
+                let ageGradedPercent = null;
 
-            // Process men and women separately
+                // Only calculate if runner has date_of_birth
+                if (result.runner?.date_of_birth) {
+                    const age = calculateAge(result.runner.date_of_birth, race.race_date);
+                    const timeInSeconds = intervalToSeconds(result.finish_time);
+                    const distanceKm = parseFloat(race.distance);
+
+                    ageGradedPercent = calculateAgeGradedPercent(
+                        distanceKm,
+                        timeInSeconds,
+                        age,
+                        result.runner.gender === 'M' ? 'M' : 'F'
+                    );
+                }
+
+                return { ...result, ageGradedPercent };
+            });
+
+            // Regular positions/points (by gender, separate)
+            const regularUpdates: Array<{ id: string; position: number; points: number }> = [];
+
             ['M', 'F'].forEach((gender) => {
-                const genderResults = raceResults
+                const genderResults = resultsWithAgeGraded
                     .filter((r: any) => r.runner?.gender === gender)
                     .sort((a: any, b: any) => {
-                        // Sort by finish_time
                         const timeA = a.finish_time;
                         const timeB = b.finish_time;
                         return timeA < timeB ? -1 : timeA > timeB ? 1 : 0;
@@ -227,18 +257,15 @@ export default function AdminDashboard() {
 
                 genderResults.forEach((result: any) => {
                     if (prevTime === null || result.finish_time !== prevTime) {
-                        // New position (not a tie)
                         currentPosition = currentPosition + tiedCount + 1;
                         tiedCount = 0;
                     } else {
-                        // This is a tie
                         tiedCount = tiedCount + 1;
                     }
 
-                    // Calculate points: 25 for 1st, 24 for 2nd, etc., minimum 0
                     const points = Math.max(25 - (currentPosition - 1), 0);
 
-                    updates.push({
+                    regularUpdates.push({
                         id: result.id,
                         position: currentPosition,
                         points: points
@@ -248,12 +275,68 @@ export default function AdminDashboard() {
                 });
             });
 
-            // Batch update all positions and points
-            for (const update of updates) {
+            // Age-graded positions/points (COMBINED M+F, sorted by %)
+            const ageGradedUpdates: Array<{ id: string; age_graded_position: number; age_graded_points: number; age_graded_percent: number | null }> = [];
+
+            // Filter results with age-graded scores and sort by percentage (descending)
+            const sortedByAgeGraded = [...resultsWithAgeGraded]
+                .filter((r: any) => r.ageGradedPercent !== null)
+                .sort((a: any, b: any) => (b.ageGradedPercent || 0) - (a.ageGradedPercent || 0));
+
+            let ageGradedPosition = 0;
+            let prevPercent: number | null = null;
+            let agTiedCount = 0;
+
+            sortedByAgeGraded.forEach((result: any) => {
+                const roundedPercent = Math.round(result.ageGradedPercent * 100000) / 100000; // Round to avoid floating point issues
+                const prevRounded = prevPercent !== null ? Math.round(prevPercent * 100000) / 100000 : null;
+
+                if (prevRounded === null || roundedPercent !== prevRounded) {
+                    ageGradedPosition = ageGradedPosition + agTiedCount + 1;
+                    agTiedCount = 0;
+                } else {
+                    agTiedCount = agTiedCount + 1;
+                }
+
+                const ageGradedPoints = Math.max(25 - (ageGradedPosition - 1), 0);
+
+                ageGradedUpdates.push({
+                    id: result.id,
+                    age_graded_position: ageGradedPosition,
+                    age_graded_points: ageGradedPoints,
+                    age_graded_percent: result.ageGradedPercent
+                });
+
+                prevPercent = result.ageGradedPercent;
+            });
+
+            // Handle results without age-graded scores (no DOB)
+            resultsWithAgeGraded
+                .filter((r: any) => r.ageGradedPercent === null)
+                .forEach((result: any) => {
+                    ageGradedUpdates.push({
+                        id: result.id,
+                        age_graded_position: null as any,
+                        age_graded_points: null as any,
+                        age_graded_percent: null
+                    });
+                });
+
+            // Batch update: combine regular and age-graded updates
+            for (const result of resultsWithAgeGraded) {
+                const regularUpdate = regularUpdates.find(u => u.id === result.id);
+                const ageGradedUpdate = ageGradedUpdates.find(u => u.id === result.id);
+
                 await supabase
                     .from('results')
-                    .update({ position: update.position, points: update.points })
-                    .eq('id', update.id);
+                    .update({
+                        position: regularUpdate?.position,
+                        points: regularUpdate?.points,
+                        age_graded_percent: ageGradedUpdate?.age_graded_percent,
+                        age_graded_position: ageGradedUpdate?.age_graded_position,
+                        age_graded_points: ageGradedUpdate?.age_graded_points
+                    })
+                    .eq('id', result.id);
             }
 
         } catch (error) {
@@ -376,6 +459,13 @@ export default function AdminDashboard() {
                                 <option value="M">Male</option>
                                 <option value="F">Female</option>
                             </select>
+                            <input
+                                type="date"
+                                className="form-input"
+                                placeholder="Date of Birth"
+                                value={runnerForm.date_of_birth}
+                                onChange={(e) => setRunnerForm({ ...runnerForm, date_of_birth: e.target.value })}
+                            />
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 <button type="submit" className="btn btn-primary">
                                     {editingRunner ? 'Update' : 'Add Runner'}
@@ -386,7 +476,7 @@ export default function AdminDashboard() {
                                         className="btn btn-secondary"
                                         onClick={() => {
                                             setEditingRunner(null);
-                                            setRunnerForm({ name: '', gender: 'M' });
+                                            setRunnerForm({ name: '', gender: 'M', date_of_birth: '' });
                                         }}
                                     >
                                         Cancel
@@ -425,7 +515,7 @@ export default function AdminDashboard() {
                                                         className="icon-btn"
                                                         onClick={() => {
                                                             setEditingRunner(runner);
-                                                            setRunnerForm({ name: runner.name, gender: runner.gender });
+                                                            setRunnerForm({ name: runner.name, gender: runner.gender, date_of_birth: runner.date_of_birth || '' });
                                                         }}
                                                         title="Edit"
                                                     >

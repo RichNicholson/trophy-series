@@ -2,6 +2,7 @@ export interface Runner {
     id: string;
     name: string;
     gender: 'M' | 'F';
+    date_of_birth?: string;
     created_at?: string;
 }
 
@@ -20,6 +21,9 @@ export interface Result {
     finish_time: string; // stored as interval in DB, displayed as HH:MM:SS
     position?: number;
     points?: number;
+    age_graded_percent?: number;
+    age_graded_position?: number;
+    age_graded_points?: number;
     created_at?: string;
     // Joined data
     runner?: Runner;
