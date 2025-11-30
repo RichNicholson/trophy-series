@@ -33,6 +33,10 @@ export default function AdminDashboard() {
     const [inlineEditingRunnerId, setInlineEditingRunnerId] = useState<string | null>(null);
     const [inlineRunnerForm, setInlineRunnerForm] = useState({ name: '', gender: 'M' as 'M' | 'F', date_of_birth: '' });
 
+    // Inline editing state for races
+    const [inlineEditingRaceId, setInlineEditingRaceId] = useState<string | null>(null);
+    const [inlineRaceForm, setInlineRaceForm] = useState({ name: '', race_date: '', distance: '' });
+
     useEffect(() => {
         if (!isAdmin) {
             navigate('/login');
@@ -238,6 +242,35 @@ export default function AdminDashboard() {
             console.error('Error deleting race:', error);
             alert('Error deleting race');
         }
+    };
+
+    // Inline editing handlers for races
+    const handleInlineEditRace = (race: Race) => {
+        setInlineEditingRaceId(race.id);
+        setInlineRaceForm({ name: race.name, race_date: race.race_date, distance: race.distance });
+    };
+
+    const handleSaveInlineRace = async (raceId: string) => {
+        try {
+            const { error } = await supabase
+                .from('races')
+                .update(inlineRaceForm)
+                .eq('id', raceId);
+
+            if (error) throw error;
+
+            setRaces(races.map(r => r.id === raceId ? { ...r, ...inlineRaceForm } : r));
+            setInlineEditingRaceId(null);
+            setInlineRaceForm({ name: '', race_date: '', distance: '' });
+        } catch (error) {
+            console.error('Error updating race:', error);
+            alert('Error updating race');
+        }
+    };
+
+    const handleCancelInlineRaceEdit = () => {
+        setInlineEditingRaceId(null);
+        setInlineRaceForm({ name: '', race_date: '', distance: '' });
     };
 
     // Helper function to normalize time format for PostgreSQL INTERVAL
@@ -743,30 +776,81 @@ export default function AdminDashboard() {
                                 ) : (
                                     races.map((race) => (
                                         <tr key={race.id}>
-                                            <td>{race.name}</td>
-                                            <td>{new Date(race.race_date).toLocaleDateString()}</td>
-                                            <td>{race.distance}</td>
-                                            <td>
-                                                <div className="action-icons">
-                                                    <button
-                                                        className="icon-btn"
-                                                        onClick={() => {
-                                                            setEditingRace(race);
-                                                            setRaceForm({ name: race.name, race_date: race.race_date, distance: race.distance });
-                                                        }}
-                                                        title="Edit"
-                                                    >
-                                                        ✏️
-                                                    </button>
-                                                    <button
-                                                        className="icon-btn danger"
-                                                        onClick={() => handleDeleteRace(race.id)}
-                                                        title="Delete"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            {inlineEditingRaceId === race.id ? (
+                                                // Inline edit mode
+                                                <>
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            className="form-input"
+                                                            value={inlineRaceForm.name}
+                                                            onChange={(e) => setInlineRaceForm({ ...inlineRaceForm, name: e.target.value })}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="date"
+                                                            className="form-input"
+                                                            value={inlineRaceForm.race_date}
+                                                            onChange={(e) => setInlineRaceForm({ ...inlineRaceForm, race_date: e.target.value })}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            className="form-input"
+                                                            value={inlineRaceForm.distance}
+                                                            onChange={(e) => setInlineRaceForm({ ...inlineRaceForm, distance: e.target.value })}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <div className="action-icons">
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={() => handleSaveInlineRace(race.id)}
+                                                                title="Save"
+                                                            >
+                                                                ✅
+                                                            </button>
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={handleCancelInlineRaceEdit}
+                                                                title="Cancel"
+                                                            >
+                                                                ❌
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                // View mode
+                                                <>
+                                                    <td>{race.name}</td>
+                                                    <td>{new Date(race.race_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
+                                                    <td>{race.distance}</td>
+                                                    <td>
+                                                        <div className="action-icons">
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={() => handleInlineEditRace(race)}
+                                                                title="Edit"
+                                                            >
+                                                                ✏️
+                                                            </button>
+                                                            <button
+                                                                className="icon-btn danger"
+                                                                onClick={() => handleDeleteRace(race.id)}
+                                                                title="Delete"
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            )}
                                         </tr>
                                     ))
                                 )}
