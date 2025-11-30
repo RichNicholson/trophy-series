@@ -116,19 +116,22 @@ export default function ChampionshipStandingsAgeGraded() {
         <Layout>
             <div className="container-wide">
                 <div className="page-header">
-                    <h1 className="page-title" style={{ color: 'var(--color-brand-green)' }}>🏆 Age-Graded Championship</h1>
+                    <div className="page-header">
+                        <h1 className="page-title" style={{ color: 'var(--color-brand-purple)' }}>🏆 Age-Graded Championship</h1>
+                        <p className="page-subtitle">Overall standings based on WAVA age-graded performance</p>
+                    </div>
                     <p className="page-subtitle">Overall standings based on WAVA age-graded performance</p>
                 </div>
 
                 <div className="card">
                     <div className="table-container">
                         <table className="table">
-                            <thead style={{ background: 'var(--color-brand-green-light)' }}>
+                            <thead style={{ background: 'var(--color-brand-purple-light)' }}>
                                 <tr>
-                                    <th style={{ color: 'var(--color-brand-green)' }}>Pos</th>
-                                    <th style={{ color: 'var(--color-brand-green)' }}>Runner</th>
-                                    <th style={{ color: 'var(--color-brand-green)' }}>Total Points</th>
-                                    <th style={{ color: 'var(--color-brand-green)' }}>Races</th>
+                                    <th style={{ color: 'var(--color-brand-purple)' }}>Pos</th>
+                                    <th style={{ color: 'var(--color-brand-purple)' }}>Runner</th>
+                                    <th style={{ color: 'var(--color-brand-purple)' }}>Total Points</th>
+                                    <th style={{ color: 'var(--color-brand-purple)' }}>Races</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -154,7 +157,7 @@ export default function ChampionshipStandingsAgeGraded() {
                                             <td>
                                                 <strong style={{
                                                     fontSize: standing.position < 4 ? '1.125rem' : '1rem',
-                                                    color: standing.position < 4 ? 'var(--color-brand-green)' : 'inherit'
+                                                    color: standing.position < 4 ? 'var(--color-brand-purple)' : 'inherit'
                                                 }}>
                                                     {standing.total_points}
                                                 </strong>

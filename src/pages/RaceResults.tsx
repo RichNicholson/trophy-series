@@ -230,17 +230,17 @@ export default function RaceResults() {
 
                                     {/* Age-Graded Results (Combined) */}
                                     <div className="card" style={{ marginTop: '2rem' }}>
-                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-brand-green)' }}>
+                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-brand-purple)' }}>
                                             🏆 Age-Graded Results (Combined)
                                         </h3>
                                         <div className="table-container">
                                             <table className="table">
-                                                <thead style={{ background: 'var(--color-brand-green-light)' }}>
+                                                <thead style={{ background: 'var(--color-brand-purple-light)' }}>
                                                     <tr>
-                                                        <th style={{ color: 'var(--color-brand-green)' }}>Pos</th>
-                                                        <th style={{ color: 'var(--color-brand-green)' }}>Name</th>
-                                                        <th style={{ color: 'var(--color-brand-green)' }}>AG %</th>
-                                                        <th style={{ color: 'var(--color-brand-green)' }}>Points</th>
+                                                        <th style={{ color: 'var(--color-brand-purple)' }}>Pos</th>
+                                                        <th style={{ color: 'var(--color-brand-purple)' }}>Name</th>
+                                                        <th style={{ color: 'var(--color-brand-purple)' }}>AG %</th>
+                                                        <th style={{ color: 'var(--color-brand-purple)' }}>Points</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -275,7 +275,7 @@ export default function RaceResults() {
                                                                         </strong>
                                                                     </td>
                                                                     <td>
-                                                                        <strong style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-green)' : 'inherit' }}>
+                                                                        <strong style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-purple)' : 'inherit' }}>
                                                                             {result.age_graded_points}
                                                                         </strong>
                                                                     </td>
