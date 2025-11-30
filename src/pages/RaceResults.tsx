@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import type { Race, Result } from '../types';
 import Layout from '../components/Layout';
 import { format } from 'date-fns';
-import { calculateAge } from '../lib/ageGrading';
 
 export default function RaceResults() {
     const [races, setRaces] = useState<Race[]>([]);
