@@ -132,9 +132,10 @@ function parseDate(dateStr) {
     const month = months[monthStr];
     if (month === undefined) return null;
 
-    // Return YYYY-MM-DD
-    const date = new Date(year, month, day);
-    return date.toISOString().split('T')[0];
+    // Return YYYY-MM-DD formatted directly to avoid timezone issues
+    const monthPadded = String(month + 1).padStart(2, '0');
+    const dayPadded = String(day).padStart(2, '0');
+    return `${year}-${monthPadded}-${dayPadded}`;
 }
 
 function parseRaceDate(dateStr) {
@@ -149,8 +150,10 @@ function parseRaceDate(dateStr) {
 
     if (month === undefined) return null;
 
-    const date = new Date(2025, month, day);
-    return date.toISOString().split('T')[0];
+    // Return YYYY-MM-DD formatted directly to avoid timezone issues
+    const monthPadded = String(month + 1).padStart(2, '0');
+    const dayPadded = String(day).padStart(2, '0');
+    return `2025-${monthPadded}-${dayPadded}`;
 }
 
 // Main Import Function
