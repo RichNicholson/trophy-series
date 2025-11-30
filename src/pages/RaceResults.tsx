@@ -20,7 +20,7 @@ export default function RaceResults() {
             const { data } = await supabase
                 .from('races')
                 .select('*')
-                .order('race_date', { ascending: false });
+                .order('race_date', { ascending: true });
 
             if (data && data.length > 0) {
                 setRaces(data);
@@ -86,7 +86,7 @@ export default function RaceResults() {
                         <div>
                             <h3 style={{ marginBottom: '1rem', fontSize: '1.125rem', fontWeight: 600 }}>Races</h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                {races.map((race) => (
+                                {races.map((race, index) => (
                                     <button
                                         key={race.id}
                                         onClick={() => handleRaceSelect(race)}
@@ -99,6 +99,9 @@ export default function RaceResults() {
                                             background: selectedRace?.id === race.id ? 'rgba(99, 102, 241, 0.15)' : 'rgba(30, 37, 71, 0.6)'
                                         }}
                                     >
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--color-accent-primary)', marginBottom: '0.25rem', fontWeight: 600 }}>
+                                            Race {index + 1}
+                                        </div>
                                         <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: '#ffffff' }}>{race.name}</div>
                                         <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
                                             {format(new Date(race.race_date), 'MMM d, yyyy')}

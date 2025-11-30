@@ -15,6 +15,7 @@ export default function AdminDashboard() {
     const [races, setRaces] = useState<Race[]>([]);
     const [results, setResults] = useState<Result[]>([]);
     const [loading, setLoading] = useState(true);
+    const [championshipCountLimit, setChampionshipCountLimit] = useState<number>(5);
 
     // Selected race for results management
     const [selectedRaceId, setSelectedRaceId] = useState<string>('');
@@ -38,9 +39,10 @@ export default function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            const [runnersRes, racesRes] = await Promise.all([
+            const [runnersRes, racesRes, settingsRes] = await Promise.all([
                 supabase.from('runners').select('*'),
-                supabase.from('races').select('*').order('race_date', { ascending: true })
+                supabase.from('races').select('*').order('race_date', { ascending: true }),
+                supabase.from('settings').select('*').eq('key', 'championship_count_limit').single()
             ]);
 
             if (runnersRes.data) {
@@ -53,6 +55,9 @@ export default function AdminDashboard() {
                 setRunners(sorted);
             }
             if (racesRes.data) setRaces(racesRes.data);
+            if (settingsRes.data) {
+                setChampionshipCountLimit(parseInt(settingsRes.data.value, 10));
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -71,6 +76,22 @@ export default function AdminDashboard() {
             if (data) setResults(data);
         } catch (error) {
             console.error('Error fetching results:', error);
+        }
+    };
+
+    // Settings Management
+    const handleUpdateChampionshipLimit = async (newLimit: number) => {
+        try {
+            const { error } = await supabase
+                .from('settings')
+                .update({ value: newLimit.toString() })
+                .eq('key', 'championship_count_limit');
+
+            if (error) throw error;
+            setChampionshipCountLimit(newLimit);
+        } catch (error) {
+            console.error('Error updating championship limit:', error);
+            alert('Error updating championship limit');
         }
     };
 
@@ -433,6 +454,28 @@ export default function AdminDashboard() {
                 <div className="page-header">
                     <h1 className="page-title">Admin Dashboard</h1>
                     <p className="page-subtitle">Manage runners, races, and results</p>
+                </div>
+
+                {/* Settings */}
+                <div className="card" style={{ marginBottom: '2rem' }}>
+                    <div className="section-header">
+                        <h2 className="section-title">Championship Settings</h2>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <label style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
+                            Number of races to count towards championship:
+                        </label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="20"
+                            className="form-input"
+                            style={{ width: '100px' }}
+                            value={championshipCountLimit}
+                            onChange={(e) => handleUpdateChampionshipLimit(parseInt(e.target.value, 10))}
+                        />
+                    </div>
                 </div>
 
                 {/* Manage Runners */}

@@ -14,6 +14,15 @@ export default function ChampionshipStandings() {
 
     const fetchStandings = async () => {
         try {
+            // Fetch championship count limit setting
+            const { data: settingsData } = await supabase
+                .from('settings')
+                .select('value')
+                .eq('key', 'championship_count_limit')
+                .single();
+
+            const countLimit = settingsData ? parseInt(settingsData.value, 10) : 5;
+
             // Fetch all results with runner data
             const { data: results } = await supabase
                 .from('results')
@@ -52,10 +61,10 @@ export default function ChampionshipStandings() {
             const allStandings: ChampionshipStanding[] = Array.from(standingsMap.values()).map(entry => {
                 // Sort points descending
                 const sortedPoints = entry.points.sort((a, b) => b - a);
-                // Take top 5
-                const best5 = sortedPoints.slice(0, 5);
+                // Take top N (use dynamic limit)
+                const bestN = sortedPoints.slice(0, countLimit);
                 // Sum
-                const total_points = best5.reduce((sum, p) => sum + p, 0);
+                const total_points = bestN.reduce((sum, p) => sum + p, 0);
 
                 return {
                     runner_id: entry.runner_id,
