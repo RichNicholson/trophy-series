@@ -166,7 +166,11 @@ export default function RaceResults() {
                                                                         </td>
                                                                         <td>{result.runner?.name}</td>
                                                                         <td>{result.finish_time}</td>
-                                                                        <td><strong>{result.points}</strong></td>
+                                                                        <td>
+                                                                            <strong style={{ color: result.position && result.position <= 3 ? 'var(--color-male)' : 'inherit' }}>
+                                                                                {result.points}
+                                                                            </strong>
+                                                                        </td>
                                                                     </tr>
                                                                 ))
                                                             )}
@@ -209,7 +213,11 @@ export default function RaceResults() {
                                                                         </td>
                                                                         <td>{result.runner?.name}</td>
                                                                         <td>{result.finish_time}</td>
-                                                                        <td><strong>{result.points}</strong></td>
+                                                                        <td>
+                                                                            <strong style={{ color: result.position && result.position <= 3 ? 'var(--color-female)' : 'inherit' }}>
+                                                                                {result.points}
+                                                                            </strong>
+                                                                        </td>
                                                                     </tr>
                                                                 ))
                                                             )}
@@ -266,7 +274,11 @@ export default function RaceResults() {
                                                                                 : '-'}
                                                                         </strong>
                                                                     </td>
-                                                                    <td><strong style={{ color: 'var(--color-brand-green)' }}>{result.age_graded_points}</strong></td>
+                                                                    <td>
+                                                                        <strong style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-green)' : 'inherit' }}>
+                                                                            {result.age_graded_points}
+                                                                        </strong>
+                                                                    </td>
                                                                 </tr>
                                                             ))
                                                     )}
