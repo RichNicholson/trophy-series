@@ -275,6 +275,19 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   border-top: 1px solid rgba(0, 133, 255, 0.1);
 }
 
+@media (max-width: 640px) {
+
+  .table th,
+  .table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8125rem;
+  }
+
+  .table th {
+    white-space: nowrap;
+  }
+}
+
 .table tbody tr {
   transition: background var(--transition-fast);
 }

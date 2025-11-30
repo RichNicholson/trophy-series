@@ -127,9 +127,9 @@ export default function ChampionshipStandings() {
                     <table className="table">
                         <thead style={{ background: headerBgColor }}>
                             <tr>
-                                <th style={{ color }}>Position</th>
+                                <th style={{ color }}>Pos</th>
                                 <th style={{ color }}>Runner</th>
-                                <th style={{ color }}>Total Points</th>
+                                <th style={{ color }}>Pts</th>
                                 <th style={{ color }}>Races</th>
                             </tr>
                         </thead>

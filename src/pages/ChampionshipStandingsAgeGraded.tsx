@@ -130,7 +130,7 @@ export default function ChampionshipStandingsAgeGraded() {
                                 <tr>
                                     <th style={{ color: 'var(--color-brand-purple)' }}>Pos</th>
                                     <th style={{ color: 'var(--color-brand-purple)' }}>Runner</th>
-                                    <th style={{ color: 'var(--color-brand-purple)' }}>Total Points</th>
+                                    <th style={{ color: 'var(--color-brand-purple)' }}>Pts</th>
                                     <th style={{ color: 'var(--color-brand-purple)' }}>Races</th>
                                 </tr>
                             </thead>

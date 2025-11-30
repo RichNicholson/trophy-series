@@ -600,8 +600,8 @@ export default function AdminDashboard() {
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Gender</th>
-                                    <th>Date of Birth</th>
+                                    <th>Sex</th>
+                                    <th>DOB</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -762,9 +762,9 @@ export default function AdminDashboard() {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>Race Name</th>
+                                    <th>Race</th>
                                     <th>Date</th>
-                                    <th>Distance</th>
+                                    <th>Dist</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
