@@ -640,7 +640,12 @@ export default function AdminDashboard() {
                                                             {runner.gender === 'M' ? 'Male' : 'Female'}
                                                         </span>
                                                     </td>
-                                                    <td>{runner.date_of_birth || '-'}</td>
+                                                    <td>
+                                                        {runner.date_of_birth
+                                                            ? new Date(runner.date_of_birth).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                                                            : '-'
+                                                        }
+                                                    </td>
                                                     <td>
                                                         <div className="action-icons">
                                                             <button
