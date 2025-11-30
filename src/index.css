@@ -1,25 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --color-bg-primary: #0a0e27;
-  --color-bg-secondary: #141937;
-  --color-bg-tertiary: #1e2547;
+  /* Light Mode Backgrounds */
+  --color-bg-primary: #f0f8ff;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e6f2ff;
 
-  --color-accent-primary: #6366f1;
-  --color-accent-secondary: #a855f7;
-  --color-accent-tertiary: #06b6d4;
+  /* ERR Brand Colors */
+  --color-accent-primary: #0085FF;
+  --color-accent-secondary: #fd7e14;
+  --color-accent-tertiary: #003366;
 
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted: #64748b;
+  /* Light Mode Text */
+  --color-text-primary: #003366;
+  --color-text-secondary: #495057;
+  --color-text-muted: #6c757d;
 
+  /* Status Colors */
   --color-success: #10b981;
   --color-error: #ef4444;
   --color-warning: #f59e0b;
 
-  --color-male: #3b82f6;
-  --color-female: #ec4899;
+  /* Gender Colors */
+  --color-male: #0085FF;
+  --color-female: #ff69b4;
 
+  /* Position Badge Colors */
+  --color-gold: #FFD700;
+  --color-silver: #C0C0C0;
+  --color-bronze: #CD7F32;
+
+  /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -27,17 +38,20 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
+  /* Border Radius */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  /* Shadows for Light Mode */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.15);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.15);
+  --shadow-blue: 0 0 0 3px rgba(0, 133, 255, 0.1);
 
+  /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-base: 200ms ease-in-out;
   --transition-slow: 300ms ease-in-out;
@@ -59,28 +73,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Glassmorphism Card */
+/* Clean Light Mode Card */
 .card {
-  background: rgba(30, 37, 71, 0.6);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-xl);
+  background: var(--color-bg-secondary);
+  border: 1px solid rgba(0, 133, 255, 0.15);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0, 133, 255, 0.3);
 }
 
 /* Navigation */
 .nav {
-  background: rgba(20, 25, 55, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid rgba(0, 133, 255, 0.15);
+  box-shadow: var(--shadow-sm);
   padding: var(--spacing-lg) var(--spacing-2xl);
   display: flex;
   justify-content: space-between;
@@ -93,10 +106,7 @@ body {
 .nav-brand {
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-accent-primary);
 }
 
 .nav-links {
@@ -115,13 +125,14 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--color-text-primary);
-  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-accent-primary);
+  background: var(--color-bg-tertiary);
 }
 
 .nav-link.active {
   color: var(--color-accent-primary);
-  background: rgba(99, 102, 241, 0.15);
+  background: var(--color-bg-tertiary);
+  border-bottom: 2px solid var(--color-accent-primary);
 }
 
 /* Buttons */
@@ -140,24 +151,25 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  background: var(--color-accent-primary);
   color: white;
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  box-shadow: var(--shadow-lg);
+  background: #0070dd;
 }
 
 .btn-secondary {
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--color-bg-tertiary);
   color: var(--color-accent-primary);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  border: 1px solid rgba(0, 133, 255, 0.3);
 }
 
 .btn-secondary:hover {
-  background: rgba(99, 102, 241, 0.2);
+  background: rgba(0, 133, 255, 0.1);
   border-color: var(--color-accent-primary);
 }
 
@@ -195,8 +207,8 @@ body {
 .form-select {
   width: 100%;
   padding: var(--spacing-md);
-  background: rgba(20, 25, 55, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-secondary);
+  border: 1px solid rgba(0, 133, 255, 0.2);
   border-radius: var(--radius-md);
   color: var(--color-text-primary);
   font-family: inherit;
@@ -208,7 +220,7 @@ body {
 .form-select:focus {
   outline: none;
   border-color: var(--color-accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: var(--shadow-blue);
 }
 
 .form-input::placeholder {
@@ -221,7 +233,6 @@ input[type="date"]:invalid {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
   opacity: 0.6;
   cursor: pointer;
 }
@@ -242,7 +253,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .table thead {
-  background: rgba(99, 102, 241, 0.1);
+  background: var(--color-bg-tertiary);
 }
 
 .table th {
@@ -250,14 +261,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   text-align: left;
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: var(--color-accent-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .table td {
   padding: var(--spacing-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 133, 255, 0.1);
 }
 
 .table tbody tr {
@@ -265,7 +276,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .table tbody tr:hover {
-  background: rgba(99, 102, 241, 0.05);
+  background: rgba(0, 133, 255, 0.05);
 }
 
 /* Badges */
@@ -281,15 +292,15 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .badge-male {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(0, 133, 255, 0.15);
   color: var(--color-male);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(0, 133, 255, 0.3);
 }
 
 .badge-female {
-  background: rgba(236, 72, 153, 0.2);
+  background: rgba(255, 105, 180, 0.15);
   color: var(--color-female);
-  border: 1px solid rgba(236, 72, 153, 0.3);
+  border: 1px solid rgba(255, 105, 180, 0.3);
 }
 
 /* Layout */
@@ -413,21 +424,23 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   border-radius: 50%;
   font-weight: 700;
   font-size: 0.875rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .position-1 {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: #78350f;
+  background: var(--color-gold);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
 .position-2 {
-  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-  color: #374151;
+  background: var(--color-silver);
+  box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
 }
 
 .position-3 {
-  background: linear-gradient(135deg, #fdba74, #fb923c);
-  color: #7c2d12;
+  background: var(--color-bronze);
+  box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
 }
 
 /* Mobile Responsive Classes */
