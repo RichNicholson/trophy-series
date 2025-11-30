@@ -29,6 +29,10 @@ export default function AdminDashboard() {
     const [editingRace, setEditingRace] = useState<Race | null>(null);
     const [editingResult, setEditingResult] = useState<Result | null>(null);
 
+    // Inline editing state for runners
+    const [inlineEditingRunnerId, setInlineEditingRunnerId] = useState<string | null>(null);
+    const [inlineRunnerForm, setInlineRunnerForm] = useState({ name: '', gender: 'M' as 'M' | 'F', date_of_birth: '' });
+
     useEffect(() => {
         if (!isAdmin) {
             navigate('/login');
@@ -150,6 +154,35 @@ export default function AdminDashboard() {
             console.error('Error deleting runner:', error);
             alert('Error deleting runner');
         }
+    };
+
+    // Inline editing handlers for runners
+    const handleInlineEditRunner = (runner: Runner) => {
+        setInlineEditingRunnerId(runner.id);
+        setInlineRunnerForm({ name: runner.name, gender: runner.gender, date_of_birth: runner.date_of_birth || '' });
+    };
+
+    const handleSaveInlineRunner = async (runnerId: string) => {
+        try {
+            const { error } = await supabase
+                .from('runners')
+                .update(inlineRunnerForm)
+                .eq('id', runnerId);
+
+            if (error) throw error;
+
+            setRunners(runners.map(r => r.id === runnerId ? { ...r, ...inlineRunnerForm } : r));
+            setInlineEditingRunnerId(null);
+            setInlineRunnerForm({ name: '', gender: 'M', date_of_birth: '' });
+        } catch (error) {
+            console.error('Error updating runner:', error);
+            alert('Error updating runner');
+        }
+    };
+
+    const handleCancelInlineEdit = () => {
+        setInlineEditingRunnerId(null);
+        setInlineRunnerForm({ name: '', gender: 'M', date_of_birth: '' });
     };
 
     // Race Management
@@ -535,44 +568,99 @@ export default function AdminDashboard() {
                                 <tr>
                                     <th>Name</th>
                                     <th>Gender</th>
+                                    <th>Date of Birth</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {runners.length === 0 ? (
                                     <tr>
-                                        <td colSpan={3} className="empty-state">No runners added yet</td>
+                                        <td colSpan={4} className="empty-state">No runners added yet</td>
                                     </tr>
                                 ) : (
                                     runners.map((runner) => (
                                         <tr key={runner.id}>
-                                            <td>{runner.name}</td>
-                                            <td>
-                                                <span className={`badge ${runner.gender === 'M' ? 'badge-male' : 'badge-female'}`}>
-                                                    {runner.gender === 'M' ? 'Male' : 'Female'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div className="action-icons">
-                                                    <button
-                                                        className="icon-btn"
-                                                        onClick={() => {
-                                                            setEditingRunner(runner);
-                                                            setRunnerForm({ name: runner.name, gender: runner.gender, date_of_birth: runner.date_of_birth || '' });
-                                                        }}
-                                                        title="Edit"
-                                                    >
-                                                        ✏️
-                                                    </button>
-                                                    <button
-                                                        className="icon-btn danger"
-                                                        onClick={() => handleDeleteRunner(runner.id)}
-                                                        title="Delete"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            {inlineEditingRunnerId === runner.id ? (
+                                                // Inline edit mode
+                                                <>
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            className="form-input"
+                                                            value={inlineRunnerForm.name}
+                                                            onChange={(e) => setInlineRunnerForm({ ...inlineRunnerForm, name: e.target.value })}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <select
+                                                            className="form-select"
+                                                            value={inlineRunnerForm.gender}
+                                                            onChange={(e) => setInlineRunnerForm({ ...inlineRunnerForm, gender: e.target.value as 'M' | 'F' })}
+                                                            style={{ width: '100%' }}
+                                                        >
+                                                            <option value="M">Male</option>
+                                                            <option value="F">Female</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="date"
+                                                            className="form-input"
+                                                            value={inlineRunnerForm.date_of_birth}
+                                                            onChange={(e) => setInlineRunnerForm({ ...inlineRunnerForm, date_of_birth: e.target.value })}
+                                                            style={{ width: '100%' }}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <div className="action-icons">
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={() => handleSaveInlineRunner(runner.id)}
+                                                                title="Save"
+                                                            >
+                                                                ✅
+                                                            </button>
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={handleCancelInlineEdit}
+                                                                title="Cancel"
+                                                            >
+                                                                ❌
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            ) : (
+                                                // View mode
+                                                <>
+                                                    <td>{runner.name}</td>
+                                                    <td>
+                                                        <span className={`badge ${runner.gender === 'M' ? 'badge-male' : 'badge-female'}`}>
+                                                            {runner.gender === 'M' ? 'Male' : 'Female'}
+                                                        </span>
+                                                    </td>
+                                                    <td>{runner.date_of_birth || '-'}</td>
+                                                    <td>
+                                                        <div className="action-icons">
+                                                            <button
+                                                                className="icon-btn"
+                                                                onClick={() => handleInlineEditRunner(runner)}
+                                                                title="Edit"
+                                                            >
+                                                                ✏️
+                                                            </button>
+                                                            <button
+                                                                className="icon-btn danger"
+                                                                onClick={() => handleDeleteRunner(runner.id)}
+                                                                title="Delete"
+                                                            >
+                                                                🗑️
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </>
+                                            )}
                                         </tr>
                                     ))
                                 )}
