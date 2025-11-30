@@ -116,19 +116,19 @@ export default function ChampionshipStandingsAgeGraded() {
         <Layout>
             <div className="container-wide">
                 <div className="page-header">
-                    <h1 className="page-title">🏆 Age-Graded Championship</h1>
+                    <h1 className="page-title" style={{ color: 'var(--color-brand-green)' }}>🏆 Age-Graded Championship</h1>
                     <p className="page-subtitle">Overall standings based on WAVA age-graded performance</p>
                 </div>
 
                 <div className="card">
                     <div className="table-container">
                         <table className="table">
-                            <thead>
+                            <thead style={{ background: 'var(--color-brand-green-light)' }}>
                                 <tr>
-                                    <th>Pos</th>
-                                    <th>Runner</th>
-                                    <th>Total Points</th>
-                                    <th>Races</th>
+                                    <th style={{ color: 'var(--color-brand-green)' }}>Pos</th>
+                                    <th style={{ color: 'var(--color-brand-green)' }}>Runner</th>
+                                    <th style={{ color: 'var(--color-brand-green)' }}>Total Points</th>
+                                    <th style={{ color: 'var(--color-brand-green)' }}>Races</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -154,7 +154,7 @@ export default function ChampionshipStandingsAgeGraded() {
                                             <td>
                                                 <strong style={{
                                                     fontSize: standing.position < 4 ? '1.125rem' : '1rem',
-                                                    color: standing.position < 4 ? 'var(--color-accent-primary)' : 'inherit'
+                                                    color: standing.position < 4 ? 'var(--color-brand-green)' : 'inherit'
                                                 }}>
                                                     {standing.total_points}
                                                 </strong>

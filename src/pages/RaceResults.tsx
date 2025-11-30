@@ -222,17 +222,17 @@ export default function RaceResults() {
 
                                     {/* Age-Graded Results (Combined) */}
                                     <div className="card" style={{ marginTop: '2rem' }}>
-                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-accent)' }}>
+                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem', color: 'var(--color-brand-green)' }}>
                                             🏆 Age-Graded Results (Combined)
                                         </h3>
                                         <div className="table-container">
                                             <table className="table">
-                                                <thead>
+                                                <thead style={{ background: 'var(--color-brand-green-light)' }}>
                                                     <tr>
-                                                        <th>Pos</th>
-                                                        <th>Name</th>
-                                                        <th>AG %</th>
-                                                        <th>Points</th>
+                                                        <th style={{ color: 'var(--color-brand-green)' }}>Pos</th>
+                                                        <th style={{ color: 'var(--color-brand-green)' }}>Name</th>
+                                                        <th style={{ color: 'var(--color-brand-green)' }}>AG %</th>
+                                                        <th style={{ color: 'var(--color-brand-green)' }}>Points</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -266,7 +266,7 @@ export default function RaceResults() {
                                                                                 : '-'}
                                                                         </strong>
                                                                     </td>
-                                                                    <td><strong>{result.age_graded_points}</strong></td>
+                                                                    <td><strong style={{ color: 'var(--color-brand-green)' }}>{result.age_graded_points}</strong></td>
                                                                 </tr>
                                                             ))
                                                     )}
