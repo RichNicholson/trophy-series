@@ -232,7 +232,6 @@ export default function RaceResults() {
                                                     <tr>
                                                         <th>Pos</th>
                                                         <th>Name</th>
-                                                        <th>Gender</th>
                                                         <th>AG %</th>
                                                         <th>Points</th>
                                                     </tr>
@@ -243,7 +242,7 @@ export default function RaceResults() {
                                                         .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
                                                         .length === 0 ? (
                                                         <tr>
-                                                            <td colSpan={5} className="empty-state">No age-graded results available</td>
+                                                            <td colSpan={4} className="empty-state">No age-graded results available</td>
                                                         </tr>
                                                     ) : (
                                                         results
@@ -261,7 +260,6 @@ export default function RaceResults() {
                                                                         )}
                                                                     </td>
                                                                     <td>{result.runner?.name}</td>
-                                                                    <td>{result.runner?.gender}</td>
                                                                     <td>
                                                                         <strong>
                                                                             {result.age_graded_percent
