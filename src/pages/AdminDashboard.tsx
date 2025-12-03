@@ -109,7 +109,10 @@ export default function AdminDashboard() {
         try {
             const { data, error } = await supabase
                 .from('runners')
-                .insert([runnerForm])
+                .insert([{
+                    ...runnerForm,
+                    date_of_birth: runnerForm.date_of_birth === '' ? null : runnerForm.date_of_birth
+                }])
                 .select();
 
             if (error) throw error;
@@ -128,14 +131,23 @@ export default function AdminDashboard() {
         try {
             const { error } = await supabase
                 .from('runners')
-                .update({ name: runnerForm.name, gender: runnerForm.gender })
+                .update({
+                    name: runnerForm.name,
+                    gender: runnerForm.gender,
+                    date_of_birth: runnerForm.date_of_birth === '' ? null : runnerForm.date_of_birth
+                })
                 .eq('id', editingRunner.id);
 
             if (error) throw error;
 
             setRunners(runners.map(r =>
                 r.id === editingRunner.id
-                    ? { ...r, name: runnerForm.name, gender: runnerForm.gender }
+                    ? {
+                        ...r,
+                        name: runnerForm.name,
+                        gender: runnerForm.gender,
+                        date_of_birth: runnerForm.date_of_birth === '' ? undefined : runnerForm.date_of_birth
+                    }
                     : r
             ));
 
@@ -170,7 +182,10 @@ export default function AdminDashboard() {
         try {
             const { error } = await supabase
                 .from('runners')
-                .update(inlineRunnerForm)
+                .update({
+                    ...inlineRunnerForm,
+                    date_of_birth: inlineRunnerForm.date_of_birth === '' ? null : inlineRunnerForm.date_of_birth
+                })
                 .eq('id', runnerId);
 
             if (error) throw error;
