@@ -248,17 +248,21 @@ export default function RaceResults() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {results
-                                                        .filter(r => r.age_graded_percent !== null && r.age_graded_percent !== undefined)
-                                                        .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
-                                                        .length === 0 ? (
+                                                    {results.length === 0 ? (
                                                         <tr>
-                                                            <td colSpan={4} className="empty-state">No age-graded results available</td>
+                                                            <td colSpan={4} className="empty-state">No results available</td>
                                                         </tr>
                                                     ) : (
                                                         results
-                                                            .filter(r => r.age_graded_percent !== null && r.age_graded_percent !== undefined)
-                                                            .sort((a, b) => (a.age_graded_position || 999) - (b.age_graded_position || 999))
+                                                            .sort((a, b) => {
+                                                                // Sort by age-graded position, putting those without scores at the end
+                                                                if (a.age_graded_position && b.age_graded_position) {
+                                                                    return a.age_graded_position - b.age_graded_position;
+                                                                }
+                                                                if (a.age_graded_position) return -1;
+                                                                if (b.age_graded_position) return 1;
+                                                                return 0;
+                                                            })
                                                             .map((result) => (
                                                                 <tr key={result.id} style={{ fontWeight: result.age_graded_position && result.age_graded_position <= 3 ? 700 : 400 }}>
                                                                     <td>
@@ -267,18 +271,18 @@ export default function RaceResults() {
                                                                                 {result.age_graded_position}
                                                                             </span>
                                                                         ) : (
-                                                                            result.age_graded_position
+                                                                            result.age_graded_position || '-'
                                                                         )}
                                                                     </td>
                                                                     <td>{result.runner?.name}</td>
                                                                     <td>
                                                                         {result.age_graded_percent
                                                                             ? (result.age_graded_percent * 100).toFixed(2) + '%'
-                                                                            : '-'}
+                                                                            : <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>Missing DOB</span>}
                                                                     </td>
                                                                     <td>
                                                                         <span style={{ color: result.age_graded_position && result.age_graded_position <= 3 ? 'var(--color-brand-purple)' : 'inherit' }}>
-                                                                            {result.age_graded_points}
+                                                                            {result.age_graded_points || '-'}
                                                                         </span>
                                                                     </td>
                                                                 </tr>
