@@ -4,10 +4,12 @@ A beautiful, modern web application for managing running club race series, track
 
 ## Features
 
-- 🏃 **Runner Management**: Add and manage club members with gender tracking
-- 🏁 **Race Management**: Create races with dates and distances  
+- 🏃 **Runner Management**: Add and manage club members with gender and age tracking
+- 🏁 **Race Management**: Create races with dates and distances
 - 📊 **Results Tracking**: Enter finish times with automatic position and points calculation
+- 👴 **Age Grading**: Automatic calculation of age-graded percentages (WAVA/WMA)
 - 🏆 **Championship Standings**: Real-time point accumulation across all races
+- 📈 **Age-Graded Standings**: Separate championship based on age-graded performance
 - 👥 **Gender Separation**: Separate standings and scoring for men and women
 - 🔒 **Admin Access**: Password-protected admin dashboard
 - 🎨 **Modern UI**: Glassmorphism design with dark mode
@@ -16,6 +18,7 @@ A beautiful, modern web application for managing running club race series, track
 
 - **Frontend**: Vite + React + TypeScript
 - **Database**: Supabase (PostgreSQL)
+- **Testing**: Vitest + React Testing Library
 - **Hosting**: Vercel (free tier)
 - **Styling**: Custom CSS with glassmorphism effects
 
@@ -72,6 +75,16 @@ npm run dev
 
 The app will be available at `http://localhost:5173`
 
+### 7. Run Tests
+
+This project includes a comprehensive test suite.
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:coverage # Generate coverage report
+```
+
 ## Deployment to Vercel
 
 ### 1. Push to GitHub
@@ -120,7 +133,7 @@ Your app will be live at `https://your-project.vercel.app` in ~2 minutes!
 ### Managing Runners
 
 1. In Admin Dashboard, go to "Manage Runners"
-2. Enter runner name and select gender
+2. Enter runner name, select gender, and **Date of Birth** (required for age grading)
 3. Click "Add Runner"
 4. Edit or delete using the action buttons
 
@@ -139,15 +152,17 @@ Your app will be live at `https://your-project.vercel.app` in ~2 minutes!
 5. Click "Add Result"
 
 **Automatic Calculations:**
-- Positions are calculated by gender automatically
-- Points: 25 for 1st, 24 for 2nd, down to 0
-- Ties: Runners with same time get same points, next runner skips positions
+- **Positions**: Calculated by gender automatically
+- **Points**: 25 for 1st, 24 for 2nd, down to 0
+- **Age Grading**: Calculated automatically if runner has a DOB
+- **Ties**: Runners with same time get same points, next runner skips positions
 
 ### Viewing Results
 
 Public users can:
 - View race results by clicking "Race Results"
 - See championship standings at "Championship"
+- See age-graded standings at "Age-Graded"
 - All views separate men and women automatically
 
 ## Scoring System
@@ -156,6 +171,7 @@ Public users can:
 - **Ties**: If two runners tie for 1st (25 pts each), the next runner gets 3rd place (23 pts)
 - **Gender Separate**: Men and women compete for separate championships
 - **Accumulation**: Total points across all races determine championship winners
+- **Age Grading**: Uses WAVA/WMA factors to calculate performance percentage relative to world record for that age/gender.
 
 ## Database Schema
 
@@ -163,6 +179,7 @@ Public users can:
 - `id` (UUID)
 - `name` (Text)
 - `gender` ('M' or 'F')
+- `date_of_birth` (Date)
 - `created_at` (Timestamp)
 
 ### `races`
@@ -179,6 +196,9 @@ Public users can:
 - `finish_time` (Interval)
 - `position` (Integer, auto-calculated)
 - `points` (Integer, auto-calculated)
+- `age_graded_percent` (Decimal, auto-calculated)
+- `age_graded_position` (Integer, auto-calculated)
+- `age_graded_points` (Integer, auto-calculated)
 - `created_at` (Timestamp)
 
 ## Troubleshooting
@@ -197,7 +217,7 @@ Public users can:
 - Multiple seasons/years support
 - Email notifications for new results
 - CSV export for results
- - Runner profile pages with statistics
+- Runner profile pages with statistics
 - Race photos and descriptions
 - Mobile app version
 
