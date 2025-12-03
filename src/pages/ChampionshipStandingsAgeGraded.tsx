@@ -40,8 +40,8 @@ export default function ChampionshipStandingsAgeGraded() {
             results.forEach((result: any) => {
                 if (!result.runner) return;
 
-                // Only count if they have age graded points (meaning they have DOB)
-                if (result.age_graded_points === null || result.age_graded_points === undefined) return;
+                // Include everyone, even if no age graded points (missing DOB)
+                // if (result.age_graded_points === null || result.age_graded_points === undefined) return;
 
                 const runnerId = result.runner.id;
                 const points = result.age_graded_points || 0;
@@ -75,7 +75,13 @@ export default function ChampionshipStandingsAgeGraded() {
                     total_points,
                     races_participated: entry.points.length
                 };
-            }).sort((a, b) => b.total_points - a.total_points);
+            }).sort((a, b) => {
+                // Sort by total points descending
+                // Runners with 0 points (likely missing DOB) should be at the bottom
+                if (a.total_points === 0 && b.total_points > 0) return 1;
+                if (b.total_points === 0 && a.total_points > 0) return -1;
+                return b.total_points - a.total_points;
+            });
 
             setStandings(sortedStandings);
         } catch (error) {
@@ -97,6 +103,11 @@ export default function ChampionshipStandingsAgeGraded() {
 
     // Calculate positions with tie handling
     const standingsWithPositions = standings.map((standing, index) => {
+        // If 0 points (missing DOB), don't give a position
+        if (standing.total_points === 0) {
+            return { ...standing, position: 0 }; // 0 indicates no position
+        }
+
         let position = index + 1;
 
         // Check if tied with previous runner
@@ -138,26 +149,36 @@ export default function ChampionshipStandingsAgeGraded() {
                                     </tr>
                                 ) : (
                                     standingsWithPositions.map((standing) => (
-                                        <tr key={standing.runner_id} style={{ fontWeight: standing.position < 4 ? 700 : 400 }}>
+                                        <tr key={standing.runner_id} style={{ fontWeight: standing.position > 0 && standing.position < 4 ? 700 : 400 }}>
                                             <td>
-                                                {standing.position < 4 ? (
-                                                    <span className={`position-badge position-${standing.position}`}>
-                                                        {standing.position}
-                                                    </span>
+                                                {standing.position > 0 ? (
+                                                    standing.position < 4 ? (
+                                                        <span className={`position-badge position-${standing.position}`}>
+                                                            {standing.position}
+                                                        </span>
+                                                    ) : (
+                                                        standing.position
+                                                    )
                                                 ) : (
-                                                    standing.position
+                                                    '-'
                                                 )}
                                             </td>
                                             <td>
                                                 {standing.runner_name}
                                             </td>
                                             <td>
-                                                <span style={{
-                                                    fontSize: standing.position < 4 ? '1.125rem' : '1rem',
-                                                    color: standing.position < 4 ? 'var(--color-brand-purple)' : 'inherit'
-                                                }}>
-                                                    {standing.total_points}
-                                                </span>
+                                                {standing.total_points > 0 ? (
+                                                    <span style={{
+                                                        fontSize: standing.position > 0 && standing.position < 4 ? '1.125rem' : '1rem',
+                                                        color: standing.position > 0 && standing.position < 4 ? 'var(--color-brand-purple)' : 'inherit'
+                                                    }}>
+                                                        {standing.total_points}
+                                                    </span>
+                                                ) : (
+                                                    <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }}>
+                                                        Missing DOB
+                                                    </span>
+                                                )}
                                             </td>
                                             <td>{standing.races_participated}</td>
                                         </tr>
