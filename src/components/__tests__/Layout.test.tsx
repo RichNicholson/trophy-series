@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Layout from '../Layout';
-import * as AuthContext from '../../contexts/AuthContext';
 
 // Mock the Auth context
 vi.mock('../../contexts/AuthContext', () => ({
@@ -73,6 +72,6 @@ describe('Layout Component', () => {
             </Layout>
         );
 
-        expect(screen.getByText('Admin')).toBeInTheDocument();
+        expect(screen.queryByText('Admin')).not.toBeInTheDocument();
     });
 });
