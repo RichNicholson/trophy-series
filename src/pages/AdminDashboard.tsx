@@ -525,6 +525,106 @@ export default function AdminDashboard() {
         }
     };
 
+    // Import Handlers
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        try {
+            setLoading(true);
+            const parsed = await parseResultsFile(file, runners, results);
+            setImportData(parsed);
+            setImportModalOpen(true);
+
+            // Reset input
+            e.target.value = '';
+        } catch (error) {
+            console.error('Error parsing file:', error);
+            alert('Error parsing file. Please ensure it is a valid Excel or CSV file.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleConfirmImport = async () => {
+        if (!importData || !selectedRaceId) return;
+
+        setIsProcessingImport(true);
+        try {
+            // 1. Create new runners
+            const newRunnerMap = new Map<string, string>(); // Name -> ID
+
+            if (importData.newRunners.length > 0) {
+                // Prepare new runners with default gender 'M' and null DOB
+                const runnersToCreate = importData.newRunners.map(r => ({
+                    name: r.name,
+                    gender: 'M', // Default as per plan
+                    date_of_birth: null
+                }));
+
+                const { data: createdRunners, error: createError } = await supabase
+                    .from('runners')
+                    .insert(runnersToCreate)
+                    .select();
+
+                if (createError) throw createError;
+
+                if (createdRunners) {
+                    createdRunners.forEach(r => newRunnerMap.set(r.name.toLowerCase(), r.id));
+                    // Update local state
+                    setRunners(prev => [...prev, ...createdRunners].sort((a, b) => a.name.localeCompare(b.name)));
+                }
+            }
+
+            // 2. Prepare results to insert
+            const resultsToInsert = [];
+
+            // Add existing runners results
+            for (const item of importData.existingRunners) {
+                resultsToInsert.push({
+                    race_id: selectedRaceId,
+                    runner_id: item.runner.id,
+                    finish_time: normalizeTimeFormat(item.time)
+                });
+            }
+
+            // Add new runners results
+            for (const item of importData.newRunners) {
+                const runnerId = newRunnerMap.get(item.name.toLowerCase());
+                if (runnerId) {
+                    resultsToInsert.push({
+                        race_id: selectedRaceId,
+                        runner_id: runnerId,
+                        finish_time: normalizeTimeFormat(item.time)
+                    });
+                }
+            }
+
+            if (resultsToInsert.length > 0) {
+                const { error: resultError } = await supabase
+                    .from('results')
+                    .insert(resultsToInsert);
+
+                if (resultError) throw resultError;
+
+                // Refresh results
+                await fetchResultsForRace(selectedRaceId);
+                // Recalculate positions
+                await calculateAndUpdatePositions(selectedRaceId);
+            }
+
+            setImportModalOpen(false);
+            setImportData(null);
+            alert(`Successfully imported ${resultsToInsert.length} results!`);
+
+        } catch (error) {
+            console.error('Error importing data:', error);
+            alert('Error importing data. See console for details.');
+        } finally {
+            setIsProcessingImport(false);
+        }
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -882,8 +982,26 @@ export default function AdminDashboard() {
 
                 {/* Manage Results */}
                 <div className="card">
-                    <div className="section-header">
-                        <h2 className="section-title">Manage Results</h2>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Manage Results</h2>
+                        {selectedRaceId && (
+                            <div>
+                                <input
+                                    type="file"
+                                    id="import-file"
+                                    accept=".xlsx,.xls,.csv"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileSelect}
+                                />
+                                <label
+                                    htmlFor="import-file"
+                                    className="btn btn-secondary"
+                                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                                >
+                                    <span>📂</span> Import Excel
+                                </label>
+                            </div>
+                        )}
                     </div>
 
                     <div className="form-group">
@@ -1014,6 +1132,65 @@ export default function AdminDashboard() {
                     )}
                 </div>
             </div >
+            {/* Import Confirmation Modal */}
+            {importModalOpen && importData && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ maxWidth: '600px' }}>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Confirm Import</h2>
+
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <p>Found <strong>{importData.newRunners.length + importData.existingRunners.length}</strong> results to import.</p>
+
+                            {importData.duplicates.length > 0 && (
+                                <div className="alert alert-warning" style={{ marginTop: '1rem' }}>
+                                    ⚠️ <strong>{importData.duplicates.length}</strong> duplicate results will be skipped.
+                                </div>
+                            )}
+
+                            {importData.newRunners.length > 0 && (
+                                <div className="alert alert-info" style={{ marginTop: '1rem' }}>
+                                    🆕 <strong>{importData.newRunners.length}</strong> new runners will be created.
+                                    <div style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                                        <strong>Note:</strong> New runners will be set to <strong>Male</strong> by default.
+                                        Please update their Gender and Date of Birth after import.
+                                    </div>
+                                    <ul style={{ marginTop: '0.5rem', maxHeight: '100px', overflowY: 'auto', paddingLeft: '1.5rem' }}>
+                                        {importData.newRunners.map((r, i) => (
+                                            <li key={i}>{r.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {importData.invalidRows.length > 0 && (
+                                <div className="alert alert-danger" style={{ marginTop: '1rem' }}>
+                                    ❌ <strong>{importData.invalidRows.length}</strong> rows have invalid data and will be skipped.
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => {
+                                    setImportModalOpen(false);
+                                    setImportData(null);
+                                }}
+                                disabled={isProcessingImport}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleConfirmImport}
+                                disabled={isProcessingImport || (importData.newRunners.length === 0 && importData.existingRunners.length === 0)}
+                            >
+                                {isProcessingImport ? 'Importing...' : 'Confirm Import'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Layout >
     );
 }
