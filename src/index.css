@@ -261,7 +261,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .table th {
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
   font-weight: 600;
   font-size: 0.875rem;
@@ -271,7 +271,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .table td {
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-top: 1px solid rgba(0, 133, 255, 0.1);
 }
 
