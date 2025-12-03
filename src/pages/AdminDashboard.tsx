@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import type { Runner, Race, Result } from '../types';
 import Layout from '../components/Layout';
 import { calculateAge, calculateAgeGradedPercent, intervalToSeconds } from '../lib/ageGrading';
+import { parseResultsFile, type ParsedImportData } from '../lib/importUtils';
 
 export default function AdminDashboard() {
     const { isAdmin } = useAuth();
@@ -36,6 +37,11 @@ export default function AdminDashboard() {
     // Inline editing state for races
     const [inlineEditingRaceId, setInlineEditingRaceId] = useState<string | null>(null);
     const [inlineRaceForm, setInlineRaceForm] = useState({ name: '', race_date: '', distance: '' });
+
+    // Import State
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [importData, setImportData] = useState<ParsedImportData | null>(null);
+    const [isProcessingImport, setIsProcessingImport] = useState(false);
 
     useEffect(() => {
         if (!isAdmin) {
