@@ -98,15 +98,19 @@ export default function RaceResults() {
                                             background: selectedRace?.id === race.id ? 'rgba(0, 133, 255, 0.1)' : 'var(--color-bg-secondary)'
                                         }}
                                     >
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--color-accent-primary)', marginBottom: '0.25rem', fontWeight: 600 }}>
-                                            Race {index + 1}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--color-accent-primary)', fontWeight: 600 }}>
+                                                Race {index + 1}
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                                                {race.distance} km
+                                            </div>
                                         </div>
-                                        <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--color-text-primary)' }}>{race.name}</div>
-                                        <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                                            {format(new Date(race.race_date), 'MMM d, yyyy')}
-                                        </div>
-                                        <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                                            {race.distance}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{race.name}</div>
+                                            <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap', marginLeft: '0.5rem' }}>
+                                                {format(new Date(race.race_date), 'MMM d, yyyy')}
+                                            </div>
                                         </div>
                                     </button>
                                 ))}
