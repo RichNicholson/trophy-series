@@ -116,10 +116,7 @@ export default function ChampionshipStandingsAgeGraded() {
         <Layout>
             <div className="container-wide">
                 <div className="page-header">
-                    <div className="page-header">
-                        <h1 className="page-title" style={{ color: 'var(--color-brand-purple)' }}>🏆 Age-Graded Championship</h1>
-                        <p className="page-subtitle">Overall standings based on WAVA age-graded performance</p>
-                    </div>
+                    <h1 className="page-title" style={{ color: 'var(--color-brand-purple)' }}>🏆 Age-Graded Championship</h1>
                     <p className="page-subtitle">Overall standings based on WAVA age-graded performance</p>
                 </div>
 
